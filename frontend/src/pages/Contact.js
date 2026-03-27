@@ -20,7 +20,8 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/contact', formData);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      await axios.post(`${apiUrl}/api/contact`, formData);
       setSubmitted(true);
     } catch (error) {
       console.error('Error details:', error);
