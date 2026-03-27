@@ -1,0 +1,186 @@
+.benefits-hero {
+  min-height: 50vh;
+  background: linear-gradient(160deg, var(--navy-dark) 0%, var(--navy) 100%);
+  display: flex;
+  align-items: center;
+  padding: 140px 24px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.benefits-hero::before {
+  content: '';
+  position: absolute;
+  right: -100px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 500px;
+  height: 500px;
+  border: 80px solid rgba(184,160,52,0.06);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.benefits-hero__content {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.benefits-hero h1 {
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 16px;
+  margin-top: 16px;
+}
+
+.benefits-hero h1 span {
+  color: var(--gold);
+  font-style: italic;
+}
+
+.benefits-hero p {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.7);
+  max-width: 560px;
+  line-height: 1.7;
+}
+
+.benefits-main {
+  padding: 100px 24px;
+  background: var(--white);
+}
+
+.benefits-main__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.benefits-main__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+  margin-top: 56px;
+}
+
+.benefit-card {
+  background: var(--off-white);
+  border-radius: 12px;
+  padding: 40px 32px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+  text-align: center;
+}
+
+.benefit-card:hover {
+  background: var(--white);
+  border-color: var(--gold);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(27,32,80,0.1);
+}
+
+.benefit-card__icon {
+  font-size: 2.8rem;
+  margin-bottom: 20px;
+}
+
+.benefit-card__number {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.benefit-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 10px;
+}
+
+.benefit-card p {
+  font-size: 0.92rem;
+  color: var(--gray);
+  line-height: 1.65;
+}
+
+.benefits-testimonials {
+  padding: 100px 24px;
+  background: var(--navy);
+}
+
+.benefits-testimonials__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.benefits-testimonials__inner h2 {
+  color: var(--white);
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 56px;
+}
+
+.testimonial-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(184,160,52,0.2);
+  border-radius: 12px;
+  padding: 32px;
+  transition: all 0.3s ease;
+}
+
+.testimonial-card:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--gold);
+}
+
+.testimonial-card__stars {
+  color: var(--gold);
+  font-size: 1rem;
+  margin-bottom: 16px;
+  letter-spacing: 2px;
+}
+
+.testimonial-card__text {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.7;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.testimonial-card__author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.testimonial-card__avatar {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.testimonial-card__info h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 2px;
+}
+
+.testimonial-card__info p {
+  font-size: 0.82rem;
+  color: var(--gold);
+}
