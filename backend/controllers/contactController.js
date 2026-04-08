@@ -1,7 +1,22 @@
 const Contact = require('../models/Contact');
-const sgMail = require('@sendgrid/mail');
+const nodemailer = require('nodemailer');
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+const verifyTransporter = async () => {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    throw new Error('Email credentials are missing. Set EMAIL_USER and EMAIL_PASS.');
+  }
+  await transporter.verify();
+};
 
 const submitContact = async (req, res) => {
   try {
@@ -27,10 +42,26 @@ const submitContact = async (req, res) => {
 
     // Send email notification (non-blocking)
     try {
-      const msg = {
-        to: process.env.NOTIFY_EMAIL,
-        from: process.env.EMAIL_USER,
+      const notifyEmail = process.env.NOTIFY_EMAIL || process.env.EMAIL_USER;
+      if (!notifyEmail) {
+        throw new Error('No recipient found. Set NOTIFY_EMAIL or EMAIL_USER.');
+      }
+
+      await verifyTransporter();
+
+      const mailOptions = {
+        from: `"ADS Nepal Website" <${process.env.EMAIL_USER}>`,
+        to: notifyEmail,
+        replyTo: email,
         subject: `🔔 New Contact Form Submission - ADS Nepal`,
+        text: `New contact form submission from ${firstName} ${lastName}
+
+Email: ${email}
+Phone: ${phone || 'Not provided'}
+Service: ${service}
+
+Message:
+${message}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
             <div style="background: #1B2050; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
@@ -69,9 +100,10 @@ const submitContact = async (req, res) => {
         `,
       };
 
-      await sgMail.send(msg);
+      await transporter.sendMail(mailOptions);
+      console.log('✅ Email sent successfully to:', notifyEmail);
     } catch (emailError) {
-      console.log('Email sending failed (non-blocking):', emailError.message);
+      console.log('❌ Email sending failed:', emailError.message, emailError.code || '');
       // Don't fail the request if email fails
     }
 
