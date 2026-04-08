@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Contact.css';
+
+const DEFAULT_PRODUCTION_API_URL = 'https://ads-nepal-1.onrender.com';
 
 const getApiBaseUrl = () => {
   const configured = (process.env.REACT_APP_API_URL || '').trim();
@@ -10,7 +12,7 @@ const getApiBaseUrl = () => {
     return 'http://localhost:5000';
   }
 
-  return null;
+  return DEFAULT_PRODUCTION_API_URL;
 };
 
 const Contact = () => {
@@ -25,6 +27,12 @@ const Contact = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const apiBaseUrl = getApiBaseUrl();
+
+  useEffect(() => {
+    // Warm up backend after opening contact page to reduce cold-start delay.
+    axios.get(`${apiBaseUrl}/`, { timeout: 8000 }).catch(() => {});
+  }, [apiBaseUrl]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -38,7 +46,6 @@ const Contact = () => {
     setErrorMsg('');
 
     try {
-      const apiBaseUrl = getApiBaseUrl();
       if (!apiBaseUrl) {
         throw new Error('CONTACT_API_NOT_CONFIGURED');
       }
