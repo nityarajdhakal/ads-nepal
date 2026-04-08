@@ -2,6 +2,17 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './Contact.css';
 
+const getApiBaseUrl = () => {
+  const configured = (process.env.REACT_APP_API_URL || '').trim();
+  if (configured) return configured;
+
+  if (window.location.hostname === 'localhost') {
+    return 'http://localhost:5000';
+  }
+
+  return null;
+};
+
 const Contact = () => {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -27,17 +38,20 @@ const Contact = () => {
     setErrorMsg('');
 
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_URL
-        || (window.location.hostname === 'localhost' ? 'http://localhost:5000' : '');
+      const apiBaseUrl = getApiBaseUrl();
+      if (!apiBaseUrl) {
+        throw new Error('CONTACT_API_NOT_CONFIGURED');
+      }
 
-      // Deployed free-tier backends can take longer on cold start.
-      await axios.post(`${apiBaseUrl}/api/contact`, formData, { timeout: 60000 });
+      await axios.post(`${apiBaseUrl}/api/contact`, formData, { timeout: 12000 });
       setSubmitted(true);
     } catch (error) {
-      const message = error.response?.data?.message
-        || (error.code === 'ECONNABORTED'
-          ? 'Server took too long to respond. Please wait a moment and try again.'
-          : 'Could not send message. Please ensure backend server is running.');
+      const message = error.message === 'CONTACT_API_NOT_CONFIGURED'
+        ? 'Website contact API is not configured. Set REACT_APP_API_URL in frontend deployment.'
+        : error.response?.data?.message
+          || (error.code === 'ECONNABORTED'
+            ? 'Server timed out. Please try again in a few seconds.'
+            : 'Could not send message. Please ensure backend server is running.');
       setErrorMsg(message);
     } finally {
       setSubmitting(false);
