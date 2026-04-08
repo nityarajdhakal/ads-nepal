@@ -50,15 +50,13 @@ const Contact = () => {
         throw new Error('CONTACT_API_NOT_CONFIGURED');
       }
 
-      await axios.post(`${apiBaseUrl}/api/contact`, formData, { timeout: 12000 });
+      await axios.post(`${apiBaseUrl}/api/contact`, formData);
       setSubmitted(true);
     } catch (error) {
       const message = error.message === 'CONTACT_API_NOT_CONFIGURED'
         ? 'Website contact API is not configured. Set REACT_APP_API_URL in frontend deployment.'
         : error.response?.data?.message
-          || (error.code === 'ECONNABORTED'
-            ? 'Server timed out. Please try again in a few seconds.'
-            : 'Could not send message. Please ensure backend server is running.');
+          || 'Could not send message. Please try again in a few seconds.';
       setErrorMsg(message);
     } finally {
       setSubmitting(false);
