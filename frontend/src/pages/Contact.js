@@ -12,6 +12,8 @@ const Contact = () => {
     message: '',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,15 +21,25 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
+
+    setSubmitting(true);
+    setErrorMsg('');
+
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      await axios.post(`${apiUrl}/api/contact`, formData);
+      const apiBaseUrl = process.env.REACT_APP_API_URL
+        || (window.location.hostname === 'localhost' ? 'http://localhost:5000' : '');
+
+      await axios.post(`${apiBaseUrl}/api/contact`, formData, { timeout: 15000 });
       setSubmitted(true);
     } catch (error) {
-      console.error('Error details:', error);
-      console.error('Error response:', error.response);
-      const errorMsg = error.response?.data?.message || error.message || 'Something went wrong. Please try again!';
-      alert(errorMsg);
+      const message = error.response?.data?.message
+        || (error.code === 'ECONNABORTED'
+          ? 'Request timed out. Please check backend server and try again.'
+          : 'Could not send message. Please ensure backend server is running.');
+      setErrorMsg(message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -97,6 +109,9 @@ const Contact = () => {
               <>
                 <h3>Send Us a Message</h3>
                 <form onSubmit={handleSubmit}>
+                  {errorMsg && (
+                    <p style={{ color: '#d93025', marginBottom: '12px', fontWeight: 600 }}>{errorMsg}</p>
+                  )}
                   <div className="form-row">
                     <div className="form-group">
                       <label>First Name</label>
@@ -176,8 +191,8 @@ const Contact = () => {
                     />
                   </div>
 
-                  <button type="submit" className="btn-primary form-submit">
-                    Send Message ✉️
+                  <button type="submit" className="btn-primary form-submit" disabled={submitting}>
+                    {submitting ? 'Sending...' : 'Send Message ✉️'}
                   </button>
                 </form>
               </>
