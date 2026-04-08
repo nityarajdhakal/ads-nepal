@@ -30,12 +30,13 @@ const Contact = () => {
       const apiBaseUrl = process.env.REACT_APP_API_URL
         || (window.location.hostname === 'localhost' ? 'http://localhost:5000' : '');
 
-      await axios.post(`${apiBaseUrl}/api/contact`, formData, { timeout: 15000 });
+      // Deployed free-tier backends can take longer on cold start.
+      await axios.post(`${apiBaseUrl}/api/contact`, formData, { timeout: 60000 });
       setSubmitted(true);
     } catch (error) {
       const message = error.response?.data?.message
         || (error.code === 'ECONNABORTED'
-          ? 'Request timed out. Please check backend server and try again.'
+          ? 'Server took too long to respond. Please wait a moment and try again.'
           : 'Could not send message. Please ensure backend server is running.');
       setErrorMsg(message);
     } finally {
